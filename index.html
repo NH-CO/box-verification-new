@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>سامانه تأیید اصالت جعبه</title>
+    <style>
+        body {
+            font-family: 'B Koodak', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f8f8;
+            text-align: center;
+            padding: 20px;
+        }
+        .container {
+            background: silver;
+            border-radius: 10px;
+            padding: 25px;
+            max-width: 500px;
+            margin: 0 auto;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 30px;
+        }
+        .input-group {
+            margin-bottom: 20px;
+            text-align: right;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #34495e;
+        }
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #3e28af;
+            color: Yellow;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 19px;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background-color: #2ecc71;
+        }
+        #verificationResult {
+            margin-top: 30px;
+            padding: 20px;
+            border-radius: 5px;
+            display: none;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Box Authentication System</h1>
+        
+        <div class="input-group">
+            <label for="username">Box ID (Username):</label>
+            <input type="text" id="username" placeholder="Example: BOX-1254">
+        </div>
+        
+        <div class="input-group">
+            <label for="password">Password:</label>
+            <input type="password" id="password" placeholder="System Access Code">
+        </div>
+        
+        <button onclick="verifyBox()">Authentication</button>
+        
+        <div id="verificationResult"></div>
+    </div>
+
+    <script>
+        // دیتابیس جعبه‌ها (نام کاربری و کد تأیید مربوطه)
+        const boxDatabase = {
+            "BOX-1001": "A1B2-C3D4-E5F6",
+            "BOX-1002": "G7H8-I9J0-K1L2",
+            "BOX-1003": "M3N4-O5P6-Q7R8",
+            // ... می‌توانید شناسه‌ها و کدهای بیشتری اضافه کنید
+        };
+
+        // رمز عبور ثابت سیستم
+        const SYSTEM_PASSWORD = "123@abc";
+
+        function verifyBox() {
+            const username = document.getElementById("username").value.trim();
+            const password = document.getElementById("password").value;
+            const resultDiv = document.getElementById("verificationResult");
+
+            // پاک کردن نتیجه قبلی
+            resultDiv.style.display = "none";
+            resultDiv.className = "";
+
+            // اعتبارسنجی ورودی‌ها
+            if (!username || !password) {
+                showResult("Please fill in all fields.", "error");
+                return;
+            }
+
+            // بررسی رمز عبور
+            if (password !== SYSTEM_PASSWORD) {
+                showResult("رمز عبور نامعتبر است", "error");
+                return;
+            }
+
+            // بررسی وجود شناسه جعبه در سیستم
+            if (boxDatabase.hasOwnProperty(username)) {
+                const verificationCode = boxDatabase[username];
+                showResult(
+                    `✅ تأیید اصالت موفق<br><br>
+                    <strong>شناسه جعبه:</strong> ${username}<br>
+                    <strong>کد تأیید:</strong> ${verificationCode}`,
+                    "success"
+                );
+            } else {
+                showResult("شناسه جعبه در سیستم ثبت نشده است", "error");
+            }
+        }
+
+        function showResult(message, type) {
+            const resultDiv = document.getElementById("verificationResult");
+            resultDiv.innerHTML = message;
+            resultDiv.className = type;
+            resultDiv.style.display = "block";
+        }
+    </script>
+</body>
+</html>
